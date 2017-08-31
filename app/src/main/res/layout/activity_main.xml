@@ -29,6 +29,12 @@
         android:id="@+id/customProgressBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Custom Progressbar" />
+        android:text="Custom Progressbar 1" />
+
+    <Button
+        android:id="@+id/progressBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Custom Progressbar 2" />
 
 </LinearLayout>

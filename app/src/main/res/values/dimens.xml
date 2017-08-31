@@ -4,4 +4,8 @@
     <integer name="COLOR_STOCK_CIRCLE_STATE">1</integer>
     <integer name="FULL_CIRCLE_STATE">2</integer>
 
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="progressBar_dimen">200dp</dimen>
+
 </resources>

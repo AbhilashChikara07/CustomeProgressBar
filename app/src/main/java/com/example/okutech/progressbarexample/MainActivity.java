@@ -22,6 +22,8 @@ public class MainActivity extends AppCompatActivity {
     Button circleProgressBar;
     @BindView(R.id.customProgressBar)
     Button customProgressBar;
+    @BindView(R.id.progressBar)
+    Button progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,14 +45,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @OnClick(R.id.circleProgressBar)
-    public void openCircleProgressBar(){
+    public void openCircleProgressBar() {
         Intent intent = new Intent(MainActivity.this, CircleProgressBar.class);
         startActivity(intent);
     }
 
     @OnClick(R.id.customProgressBar)
-    public void openCustomeProgressClass(){
-        Intent intent  = new Intent(MainActivity.this, CustomCircleBarActivity.class);
+    public void openCustomeProgressClass() {
+        Intent intent = new Intent(MainActivity.this, CustomCircleBarActivity.class);
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.progressBar)
+    public void openProgressBar() {
+        Intent intent = new Intent(MainActivity.this, ProgressBarActivity.class);
         startActivity(intent);
     }
 

@@ -21,6 +21,7 @@
         <activity android:name=".HorizontalProgressBar" />
         <activity android:name=".CircleProgressBar" />
         <activity android:name=".CustomCircleBarActivity" />
+        <activity android:name=".ProgressBarActivity" />
 
     </application>
 
