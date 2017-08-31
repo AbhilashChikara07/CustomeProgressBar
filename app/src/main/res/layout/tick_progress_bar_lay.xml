@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="20dp"
+    android:gravity="center">
+
+    <ImageView
+        android:id="@+id/image1"
+        android:layout_width="20dp"
+        android:layout_height="2dp"
+        android:background="@color/colorAccent" />
+
+    <ImageView
+        android:id="@+id/image2"
+        android:layout_width="20dp"
+        android:layout_height="2dp"
+        android:layout_marginLeft="5dp"
+        android:background="@color/colorAccent" />
+
+    <ImageView
+        android:id="@+id/image3"
+        android:layout_width="20dp"
+        android:layout_height="2dp"
+        android:layout_marginLeft="5dp"
+        android:background="@color/colorAccent" />
+
+    <ImageView
+        android:id="@+id/image4"
+        android:layout_width="20dp"
+        android:layout_height="2dp"
+        android:layout_marginLeft="5dp"
+        android:background="@color/colorAccent" />
+
+    <ImageView
+        android:id="@+id/image5"
+        android:layout_width="20dp"
+        android:layout_height="2dp"
+        android:layout_marginLeft="5dp"
+        android:background="@color/colorAccent" />
+
+    <ImageView
+        android:id="@+id/image6"
+        android:layout_width="20dp"
+        android:layout_height="2dp"
+        android:layout_marginLeft="5dp"
+        android:background="@color/colorAccent" />
+
+    <ImageView
+        android:id="@+id/image7"
+        android:layout_width="20dp"
+        android:layout_height="2dp"
+        android:layout_marginLeft="5dp"
+        android:background="@color/colorAccent" />
+
+</LinearLayout>

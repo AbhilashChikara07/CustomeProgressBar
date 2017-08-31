@@ -1,0 +1,7 @@
+<resources>
+
+    <integer name="INITIAL_CIRCLE_STATE">0</integer>
+    <integer name="COLOR_STOCK_CIRCLE_STATE">1</integer>
+    <integer name="FULL_CIRCLE_STATE">2</integer>
+
+</resources>

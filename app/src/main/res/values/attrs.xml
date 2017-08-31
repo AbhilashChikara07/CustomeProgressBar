@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="WizardProgressBar">
+        <attr name="stockColor" format="color" />
+        <attr name="circleColor" format="color" />
+        <attr name="stockWidth" format="dimension" />
+        <attr name="circleThickness" format="dimension"/>
+        <attr name="circleState" format="integer"/>
+    </declare-styleable>
+
+</resources>

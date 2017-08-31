@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.okutech.progressbarexample.MainActivity"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/tickProgressBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tick Progressbar" />
+
+    <Button
+        android:id="@+id/horizontalProgressBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Horizontal Progressbar" />
+
+    <Button
+        android:id="@+id/circleProgressBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Circle Progressbar" />
+
+
+    <Button
+        android:id="@+id/customProgressBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Custom Progressbar" />
+
+</LinearLayout>
