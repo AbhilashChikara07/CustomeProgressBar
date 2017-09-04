@@ -2,7 +2,6 @@ package com.example.okutech.progressbarexample;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 
@@ -24,7 +23,7 @@ public class CustomCircleBarActivity extends AppCompatActivity {
     @BindView(R.id.changeColor)
     Button changeColor;
     @BindView(R.id.circleProgressBar)
-    CustomCircleBarView circleProgressBar;
+    WizardCircleProgress circleProgressBar;
     private Unbinder unbinder;
 
 

@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 /**
@@ -19,7 +20,7 @@ import android.view.View;
  * @since 8/24/17
  */
 
-public class CustomCircleBarView extends View {
+public class WizardCircleProgress extends View {
 
     /*--CIRCLE STATES--*/
     private final int INITIAL_STATE = 0;
@@ -56,7 +57,7 @@ public class CustomCircleBarView extends View {
     private final int PROGRESS_DELAY = 8;
 
 
-    public CustomCircleBarView(Context context, @Nullable AttributeSet attrs) {
+    public WizardCircleProgress(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
         init(attrs);
@@ -144,14 +145,8 @@ public class CustomCircleBarView extends View {
         canvas.drawArc(outerUnSelectRectF, startAngel, finishAngel, false, unSelectStockPaint);
     }
 
-//    private RectF circleUnSelectedRectF;
-//    private RectF circleSelectedRectF;
-//
-//    private Paint circleUnSelectedPaint;
-//    private Paint circleSelectedPaint;
-
     public void midStateCircle(Canvas canvas) {
-        int arcCoordinate = getInitialCoordinate(0.03);
+        int arcCoordinate = getInitialCoordinate(0.05);
 
         outerUnSelectRectF.set((arcCoordinate + getPaddingLeft()), (arcCoordinate + getPaddingTop())
                 , width - (arcCoordinate + getPaddingRight()),
@@ -165,12 +160,13 @@ public class CustomCircleBarView extends View {
         canvas.drawArc(outerUnSelectRectF, startAngel, finishAngel, false, unSelectStockPaint);
         canvas.drawArc(outerSelectRectF, startAngel, getProgressAngle(), false, selectStockPaint);
 
-        int circleCoordinate = getInitialCoordinate(0.12);
+        int circleCoordinate = getInitialCoordinate(0.15);
+
         circleUnSelectedRectF.set((circleCoordinate + getPaddingLeft()), (circleCoordinate + getPaddingTop())
                 , width - (circleCoordinate + getPaddingRight()),
                 width - (circleCoordinate + getPaddingBottom()));
 
-        canvas.drawOval(circleUnSelectedRectF, unSelectStockPaint);
+        canvas.drawOval(circleUnSelectedRectF, circleUnSelectedPaint);
         canvas.drawArc(circleUnSelectedRectF, startAngel, finishAngel, false, circleUnSelectedPaint);
         canvas.drawArc(circleUnSelectedRectF, startAngel, getProgressAngle(), false, circleSelectedPaint);
     }
