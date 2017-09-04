@@ -5,8 +5,8 @@
         <attr name="stockColor" format="color" />
         <attr name="circleColor" format="color" />
         <attr name="stockWidth" format="dimension" />
-        <attr name="circleThickness" format="dimension"/>
         <attr name="circleState" format="integer"/>
+        <attr name="progressValue" format="integer"/>
     </declare-styleable>
 
 

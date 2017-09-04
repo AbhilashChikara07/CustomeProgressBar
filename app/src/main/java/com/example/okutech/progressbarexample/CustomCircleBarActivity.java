@@ -25,7 +25,6 @@ public class CustomCircleBarActivity extends AppCompatActivity {
     Button changeColor;
     @BindView(R.id.circleProgressBar)
     CustomCircleBarView circleProgressBar;
-
     private Unbinder unbinder;
 
 
@@ -40,6 +39,6 @@ public class CustomCircleBarActivity extends AppCompatActivity {
 
     @OnClick(R.id.changeColor)
     public void changeColor(){
-        circleProgressBar.setOuterCircleStockColor(ContextCompat.getColor(this, R.color.white_color));
+        circleProgressBar.startProgress(100);
     }
 }

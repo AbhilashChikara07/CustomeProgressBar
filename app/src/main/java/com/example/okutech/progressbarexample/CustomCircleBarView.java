@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
@@ -21,23 +22,39 @@ import android.view.View;
 public class CustomCircleBarView extends View {
 
     /*--CIRCLE STATES--*/
-    private final int INITIAL_CIRCLE_STATE = 0;
-    private final int COLOR_STOCK_CIRCLE_STATE = 1;
-    private final int FULL_CIRCLE_STATE = 2;
+    private final int INITIAL_STATE = 0;
+    private final int MID_STATE = 1;
+    private final int FINAL_STATE = 2;
 
-    private RectF outerRectF;
-    private RectF innerRectF;
-    private Paint stockCirclePaint;
-    private Paint fullCirclePaint;
+    private RectF outerUnSelectRectF;
+    private RectF outerSelectRectF;
+
+    private Paint unSelectStockPaint;
+    private Paint selectStockPaint;
+
+    private RectF circleUnSelectedRectF;
+    private RectF circleSelectedRectF;
+
+    private Paint circleUnSelectedPaint;
+    private Paint circleSelectedPaint;
 
     private int circleColor;
     private int stockColor;
     private float stockWidth;
-    private float circleThickness;
     private int circleState;
     private int startAngel = 270;
     private int finishAngel = 360;
     private Context context;
+    private int width;
+    private int height;
+    private int progressValue;
+
+    private Handler progressHandler;
+    private Runnable progressRunnable;
+    private int max = 100;
+    private final int PROGRESS_STEP = 2;
+    private final int PROGRESS_DELAY = 8;
+
 
     public CustomCircleBarView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -46,8 +63,11 @@ public class CustomCircleBarView extends View {
     }
 
     private void init(AttributeSet attrs) {
-        outerRectF = new RectF();
-        innerRectF = new RectF();
+        outerUnSelectRectF = new RectF();
+        outerSelectRectF = new RectF();
+        circleUnSelectedRectF = new RectF();
+        circleSelectedRectF = new RectF();
+
         TypedArray typedArray = null;
         try {
             typedArray = context.getTheme().obtainStyledAttributes(
@@ -60,22 +80,31 @@ public class CustomCircleBarView extends View {
                     stockColor);
             stockWidth = typedArray.getDimension(R.styleable.WizardProgressBar_stockWidth,
                     stockWidth);
-            circleThickness = typedArray.getDimension(R.styleable.WizardProgressBar_circleThickness,
-                    circleThickness);
-            circleState = typedArray.getInteger(R.styleable.WizardProgressBar_circleState, circleState);
+            circleState = typedArray.getInteger(R.styleable.WizardProgressBar_circleState,
+                    circleState);
+            progressValue = typedArray.getInteger(R.styleable.WizardProgressBar_progressValue, progressValue);
+
         } finally {
             typedArray.recycle();
         }
 
-        stockCirclePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        stockCirclePaint.setStyle(Paint.Style.STROKE);
-        stockCirclePaint.setColor(stockColor);
-        stockCirclePaint.setStrokeWidth(stockWidth);
+        unSelectStockPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        unSelectStockPaint.setStyle(Paint.Style.STROKE);
+        unSelectStockPaint.setColor(stockColor);
+        unSelectStockPaint.setStrokeWidth(stockWidth);
 
-        fullCirclePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        fullCirclePaint.setStyle(Paint.Style.FILL);
-        fullCirclePaint.setColor(ContextCompat.getColor(context, R.color.white_color));
+        selectStockPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        selectStockPaint.setStyle(Paint.Style.STROKE);
+        selectStockPaint.setColor(ContextCompat.getColor(context, R.color.white_color));
+        selectStockPaint.setStrokeWidth(stockWidth);
 
+        circleUnSelectedPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        circleUnSelectedPaint.setStyle(Paint.Style.FILL);
+        circleUnSelectedPaint.setColor(stockColor);
+
+        circleSelectedPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        circleSelectedPaint.setStyle(Paint.Style.FILL);
+        circleSelectedPaint.setColor(ContextCompat.getColor(context, R.color.white_color));
     }
 
 
@@ -83,16 +112,16 @@ public class CustomCircleBarView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         switch (circleState) {
-            case INITIAL_CIRCLE_STATE: {
-                makeInitialStateCircle(canvas);
+            case INITIAL_STATE: {
+                initialStateCircle(canvas);
                 break;
             }
-            case COLOR_STOCK_CIRCLE_STATE: {
-                makeStockStateCircle(canvas);
+            case MID_STATE: {
+                midStateCircle(canvas);
                 break;
             }
-            case FULL_CIRCLE_STATE: {
-                makeFullStateCircle(canvas);
+            case FINAL_STATE: {
+                finalStateCircle(canvas);
                 break;
             }
         }
@@ -100,56 +129,91 @@ public class CustomCircleBarView extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-
-        final int height = getDefaultSize(getSuggestedMinimumHeight(), heightMeasureSpec);
-        final int width = getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec);
-
-        final int outerMin = Math.min(width, height);
-        setMeasuredDimension(outerMin, outerMin);
-        outerRectF.set(circleThickness / 2 + getPaddingLeft(), circleThickness / 2 + getPaddingTop()
-                , outerMin - circleThickness / 2 - getPaddingRight(),
-                outerMin - circleThickness / 2 - getPaddingBottom());
-
-        /*-- 80 is representing that we are making inner circle by covering 80 percent of space --*/
-        int innerMin = outerMin * 80 / 100;
-        int halfWidth = width / 2;
-        int radius = halfWidth / 2;
-        int leftCoordinate = (halfWidth - radius);
-
-        innerRectF.set(leftCoordinate, leftCoordinate, innerMin - circleThickness / 2,
-                innerMin - circleThickness / 2);
+        height = getDefaultSize(getSuggestedMinimumHeight(), heightMeasureSpec);
+        width = getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec);
+        setMeasuredDimension(width, height);
     }
 
-    public void makeInitialStateCircle(Canvas canvas) {
-        canvas.drawOval(outerRectF, stockCirclePaint);
-        canvas.drawArc(outerRectF, startAngel, finishAngel, true, stockCirclePaint);
+    public void initialStateCircle(Canvas canvas) {
+        int initialCo = getInitialCoordinate(0.03);
+        outerUnSelectRectF.set(initialCo + getPaddingLeft(), initialCo + getPaddingTop()
+                , width - initialCo - getPaddingRight(),
+                width - initialCo - getPaddingBottom());
+
+        canvas.drawOval(outerUnSelectRectF, unSelectStockPaint);
+        canvas.drawArc(outerUnSelectRectF, startAngel, finishAngel, false, unSelectStockPaint);
     }
 
-    public void makeStockStateCircle(Canvas canvas) {
-        stockCirclePaint.setColor(ContextCompat.getColor(context, R.color.white_color));
-        canvas.drawOval(outerRectF, stockCirclePaint);
-        canvas.drawArc(outerRectF, startAngel, 90, true, stockCirclePaint);
+//    private RectF circleUnSelectedRectF;
+//    private RectF circleSelectedRectF;
+//
+//    private Paint circleUnSelectedPaint;
+//    private Paint circleSelectedPaint;
 
-        canvas.drawOval(innerRectF, fullCirclePaint);
-        canvas.drawArc(innerRectF, startAngel, 90, true, fullCirclePaint);
+    public void midStateCircle(Canvas canvas) {
+        int arcCoordinate = getInitialCoordinate(0.03);
+
+        outerUnSelectRectF.set((arcCoordinate + getPaddingLeft()), (arcCoordinate + getPaddingTop())
+                , width - (arcCoordinate + getPaddingRight()),
+                width - (arcCoordinate + getPaddingBottom()));
+
+        outerSelectRectF.set(arcCoordinate + getPaddingLeft(), arcCoordinate + getPaddingTop()
+                , width - (arcCoordinate + getPaddingRight()),
+                width - (arcCoordinate + getPaddingBottom()));
+
+        canvas.drawOval(outerUnSelectRectF, unSelectStockPaint);
+        canvas.drawArc(outerUnSelectRectF, startAngel, finishAngel, false, unSelectStockPaint);
+        canvas.drawArc(outerSelectRectF, startAngel, getProgressAngle(), false, selectStockPaint);
+
+        int circleCoordinate = getInitialCoordinate(0.12);
+        circleUnSelectedRectF.set((circleCoordinate + getPaddingLeft()), (circleCoordinate + getPaddingTop())
+                , width - (circleCoordinate + getPaddingRight()),
+                width - (circleCoordinate + getPaddingBottom()));
+
+        canvas.drawOval(circleUnSelectedRectF, unSelectStockPaint);
+        canvas.drawArc(circleUnSelectedRectF, startAngel, finishAngel, false, circleUnSelectedPaint);
+        canvas.drawArc(circleUnSelectedRectF, startAngel, getProgressAngle(), false, circleSelectedPaint);
     }
 
-    public void makeFullStateCircle(Canvas canvas) {
-        canvas.drawOval(outerRectF, fullCirclePaint);
-        canvas.drawArc(outerRectF, startAngel, finishAngel, true, fullCirclePaint);
+    public void finalStateCircle(Canvas canvas) {
+        int initialCo = getInitialCoordinate(0.03);
+        circleUnSelectedRectF.set(initialCo + getPaddingLeft(), initialCo + getPaddingTop()
+                , width - (initialCo + getPaddingRight()),
+                width - (initialCo + getPaddingBottom()));
+
+        circleSelectedRectF.set(initialCo + getPaddingLeft(), initialCo + getPaddingTop()
+                , width - (initialCo + getPaddingRight()),
+                width - (initialCo + getPaddingBottom()));
+
+        canvas.drawOval(circleUnSelectedRectF, circleUnSelectedPaint);
+        canvas.drawArc(circleUnSelectedRectF, startAngel, finishAngel, false, circleUnSelectedPaint);
+        canvas.drawArc(circleSelectedRectF, startAngel, getProgressAngle(), false, circleSelectedPaint);
     }
 
-    public void setOuterCircleStockColor(int stockColor) {
-        stockCirclePaint.setColor(stockColor);
-        invalidate();
+    private int getInitialCoordinate(double value) {
+        Double tempValue = width * value;
+        int xORy = tempValue.intValue();
+        return xORy;
     }
 
-//    public void setProgressWithAnimation(float progress) {
-//        ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(this, "progress", progress);
-//        objectAnimator.setDuration(1500);
-//        objectAnimator.setInterpolator(new DecelerateInterpolator());
-//        objectAnimator.start();
-//        invalidate();
-//    }
+    private float getProgressAngle() {
+        return progressValue * 360f / (float) max;
+    }
 
+    public void startProgress(final int targetedProgressValue) {
+        progressHandler = new Handler();
+        progressRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (progressValue >= targetedProgressValue) {
+                    progressHandler.removeCallbacks(progressRunnable);
+                } else {
+                    progressValue = progressValue + PROGRESS_STEP;
+                    progressHandler.postDelayed(this, PROGRESS_DELAY);
+                    invalidate();
+                }
+            }
+        };
+        progressHandler.post(progressRunnable);
+    }
 }
