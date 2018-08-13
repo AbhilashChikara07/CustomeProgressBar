@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 /**
@@ -146,23 +145,34 @@ public class WizardCircleProgress extends View {
     }
 
     public void midStateCircle(Canvas canvas) {
+        /*
+         * arcCoordinate:- Use for outer circle difference from ReactF.
+         * Blow code is use for outer circle.
+         * */
         int arcCoordinate = getInitialCoordinate(0.05);
 
-        outerUnSelectRectF.set((arcCoordinate + getPaddingLeft()), (arcCoordinate + getPaddingTop())
+        outerUnSelectRectF.set((arcCoordinate + getPaddingLeft()),
+                (arcCoordinate + getPaddingTop())
                 , width - (arcCoordinate + getPaddingRight()),
                 width - (arcCoordinate + getPaddingBottom()));
 
-        outerSelectRectF.set(arcCoordinate + getPaddingLeft(), arcCoordinate + getPaddingTop()
-                , width - (arcCoordinate + getPaddingRight()),
-                width - (arcCoordinate + getPaddingBottom()));
+        outerSelectRectF.set(arcCoordinate + getPaddingLeft(),
+                arcCoordinate + getPaddingTop()
+                , (width - (arcCoordinate + getPaddingRight()))+1,
+                (width - (arcCoordinate + getPaddingBottom())+1));
 
         canvas.drawOval(outerUnSelectRectF, unSelectStockPaint);
         canvas.drawArc(outerUnSelectRectF, startAngel, finishAngel, false, unSelectStockPaint);
         canvas.drawArc(outerSelectRectF, startAngel, getProgressAngle(), false, selectStockPaint);
 
-        int circleCoordinate = getInitialCoordinate(0.15);
+        /*
+         * circleCoordinate:- Use for difference between outer and inner circle
+         * Blow code is use for create inner circle.
+         * */
+        int circleCoordinate = getInitialCoordinate(0.20);
 
-        circleUnSelectedRectF.set((circleCoordinate + getPaddingLeft()), (circleCoordinate + getPaddingTop())
+        circleUnSelectedRectF.set((circleCoordinate + getPaddingLeft()),
+                (circleCoordinate + getPaddingTop())
                 , width - (circleCoordinate + getPaddingRight()),
                 width - (circleCoordinate + getPaddingBottom()));
 
